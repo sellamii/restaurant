@@ -37,9 +37,17 @@ export function useFetchRestaurants() {
 export function useFetchRestaurant({ restaurantId }: { restaurantId: string | string[] }) {
   return useQuery({
     queryKey: [`company`, restaurantId],
-    queryFn: () => {
-      const url = `restorants/${restaurantId}`;
-      return api(url).json<Restaurant>();
+    queryFn: async () => {
+      const url = `restaurants/${restaurantId}`;
+      try {
+        return await api(url).json<Restaurant>();
+      } catch (error: any) {
+        if (error.response && error.response.status === 404) {
+          const errorMessage = await error.response.json();
+          throw new Error(errorMessage.message || 'Restaurant not found');
+        }
+        throw new Error('An error occurred while fetching the restaurant');
+      }
     },
   });
 }
