@@ -1,16 +1,25 @@
 <script setup lang="ts">
 import { useFetchRestaurant } from '~/composables/restaurants';
+import { computed } from 'vue';
 
 const { params } = useRoute();
 const { data: restaurant, error } = useFetchRestaurant({ restaurantId: params.restaurantId });
+
+const averageRating = computed(() => {
+  if (restaurant.value && restaurant.value.reviews.length > 0) {
+    const total = restaurant.value.reviews.reduce((sum, review) => sum + review.rating, 0);
+    return total / restaurant.value.reviews.length;
+  }
+  return 0;
+});
 </script>
 
 <template>
   <VAlert v-if="error" type="error" class="mt-4">
     {{ error === 'Not Found, No any handler or file route' ? 'Restaurant not found. Please check the ID.' : error }}
   </VAlert>
-  <div v-else class="grid grid-cols-[minmax(0,_1fr)_16rem] gap-6">
-    <VCard v-if="restaurant">
+  <div v-else-if="restaurant" class="grid grid-cols-[minmax(0,_1fr)_16rem] gap-6">
+    <VCard>
       <VImg
         v-for="photo in restaurant.photos"
         :key="photo"
@@ -22,32 +31,22 @@ const { data: restaurant, error } = useFetchRestaurant({ restaurantId: params.re
         <VCardTitle class="!text-4xl text-white">
           {{ restaurant.name }}
         </VCardTitle>
-        <VAlert variant="flat" type="warning" class="mx-4 inline-block">
-          TODO: display the mean rating
-          <br>
-          Vuetify has a component for this. Use this one
-        </VAlert>
+        <VRating :model-value="averageRating" color="warning" readonly />
       </VImg>
       <VCardText>
         <div class="grid grid-cols-2 gap-4">
           <RestaurantLocation :location="restaurant.location" />
           <KeyValue icon="mdi-phone">
             <p class="text-body-1">
-              {{ restaurant.phone }}
-              <VAlert type="warning">
-                ↑ TODO: we would like to display the formatted phone
-              </VAlert>
+              {{ restaurant.display_phone || restaurant.phone }}
             </p>
           </KeyValue>
         </div>
       </VCardText>
     </VCard>
     <aside>
-      <VAlert type="warning">
-        TODO: this should go under the company card on small device
-      </VAlert>
       <ul class="pa-0">
-        <RestaurantReview />
+        <RestaurantReview v-for="review in restaurant.reviews" :key="review.id" :review="review" />
       </ul>
     </aside>
   </div>
