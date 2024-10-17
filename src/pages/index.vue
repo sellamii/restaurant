@@ -1,12 +1,29 @@
 <script setup lang="ts">
+import { ref, computed } from 'vue';
 import { useFetchRestaurants } from '~/composables/restaurants';
 
 const { data: restaurants, isError } = useFetchRestaurants();
+const selectedRatingFilter = ref(0);
+
+// update notation filter
+function updateRatingFilter(value:number) {
+  selectedRatingFilter.value = value;
+}
+
+// Filter Restaurant by Rating
+const filteredRestaurants = computed(() => {
+  if (!restaurants.value) return [];
+  if (selectedRatingFilter.value === 0) return restaurants.value;
+  return restaurants.value.filter(restaurant => {
+    const averageRating = restaurant.reviews.reduce((sum, review) => sum + review.rating, 0) / restaurant.reviews.length;
+    return averageRating >= selectedRatingFilter.value;
+  });
+});
 </script>
 
 <template>
   <div>
-    <RatingFilter />
+    <RatingFilter @update:filter="updateRatingFilter" />
     <VAlert type="warning" class="my-4">
       TODO: this should be presented as a grid<br>
       • 3 columns max<br>
@@ -21,13 +38,14 @@ const { data: restaurants, isError } = useFetchRestaurants();
         Vuetify's grid components
       </a>
     </VAlert>
-    <LoadingError v-if="isError" />
-    <div v-else-if="restaurants" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+    <LoadingError v-if="isError" />  
+    <div v-else-if="filteredRestaurants.length" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
       <RestaurantCard
-        v-for="restaurant of restaurants"
+        v-for="restaurant in filteredRestaurants"
         :key="restaurant.id"
         :restaurant="restaurant"
       />
-    </div>
+    </div>  
+    <VAlert type="warning" v-else>Aucun restaurant ne correspond au filtre de notation sélectionné.</VAlert>
   </div>
 </template>

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref, defineEmits, watch } from 'vue';
+
 const ratingFilterItems = [
   { title: `all restaurants`, value: 0 },
   { title: `5 stars`, value: 5 },
@@ -7,18 +9,28 @@ const ratingFilterItems = [
   { title: `2 stars or more`, value: 2 },
   { title: `1 star or more`, value: 1 },
 ];
+
+const emit = defineEmits(['update:filter']);
+const selectedRating = ref(0);
+
+// Watcher for selectedRating for emit new value
+watch(selectedRating, (newValue) => {
+  emit('update:filter', newValue);
+});
 </script>
 
 <template>
   <VCard variant="outlined">
-    <VAlert type="info">
-      TODO: this is a bonus! <br>
-      Implement the rating filter
-    </VAlert>
     <VCardText>
       <div class="flex flex-wrap items-center justify-between gap-8">
         <strong>Filter the restaurants by ratings</strong>
-        <VSelect :items="ratingFilterItems" variant="solo" hide-details="auto" placeholder="all restaurants" />
+        <VSelect
+          v-model="selectedRating"
+          :items="ratingFilterItems"
+          variant="solo"
+          hide-details="auto"
+          placeholder="all restaurants"
+        />
       </div>
     </VCardText>
   </VCard>
