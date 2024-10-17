@@ -18,7 +18,7 @@ const averageRating = computed(() => {
   <VAlert v-if="error" type="error" class="mt-4">
     {{ error === 'Not Found, No any handler or file route' ? 'Restaurant not found. Please check the ID.' : error }}
   </VAlert>
-  <div v-else-if="restaurant" class="grid grid-cols-[minmax(0,_1fr)_16rem] gap-6">
+  <div v-else-if="restaurant" class="grid grid-cols-1 md:grid-cols-[minmax(0,_1fr)_16rem] gap-6">
     <VCard>
       <VImg
         v-for="photo in restaurant.photos"
@@ -44,7 +44,7 @@ const averageRating = computed(() => {
         </div>
       </VCardText>
     </VCard>
-    <aside>
+    <aside class="md:col-start-2 md:row-start-1 col-span-full">
       <ul class="pa-0">
         <RestaurantReview v-for="review in restaurant.reviews" :key="review.id" :review="review" />
       </ul>
