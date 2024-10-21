@@ -41,12 +41,13 @@ export function useFetchRestaurant({ restaurantId }: { restaurantId: string | st
       const url = `restaurants/${restaurantId}`;
       try {
         return await api(url).json<Restaurant>();
-      } catch (error: any) {
+      }
+      catch (error: any) {
         if (error.response && error.response.status === 404) {
           const errorMessage = await error.response.json();
-          throw new Error(errorMessage.message || 'Restaurant not found');
+          throw new Error(errorMessage.message || `Restaurant not found`);
         }
-        throw new Error('An error occurred while fetching the restaurant');
+        throw new Error(`An error occurred while fetching the restaurant`);
       }
     },
   });

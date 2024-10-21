@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { type Restaurant } from '~/composables/restaurants';
-import { computed } from 'vue';
 
 const props = defineProps<{
   restaurant: Restaurant
@@ -8,7 +7,7 @@ const props = defineProps<{
 
 // Compute the average rating based on the reviews array in the Restaurant type
 const averageRating = computed(() => {
-  if (props.restaurant.reviews.length > 0) {
+  if (props.restaurant?.reviews?.length > 0) {
     const total = props.restaurant.reviews.reduce((sum, review) => sum + review.rating, 0);
     return total / props.restaurant.reviews.length;
   }
@@ -17,23 +16,30 @@ const averageRating = computed(() => {
 </script>
 
 <template>
-  <VCard>
+  <VCard v-if="restaurant">
     <VImg
       height="100"
       cover
-      :src="props.restaurant.photos?.[0]"
+      :src="restaurant.photos?.[0]"
     />
     <VCardTitle>
-      {{ props.restaurant.name }}
+      {{ restaurant.name }}
     </VCardTitle>
     <VRating :model-value="averageRating" active-color="primary" readonly />
     <VCardText>
-      <RestaurantLocation :location="props.restaurant.location" />
+      <RestaurantLocation :location="restaurant.location" />
     </VCardText>
     <VCardActions class="mt-auto">
-      <VBtn color="primary" variant="tonal" :to="`/restaurants/${props.restaurant.id}`">
+      <VBtn color="primary" variant="tonal" :to="`/restaurants/${restaurant.id}`">
         see more
       </VBtn>
     </VCardActions>
+  </VCard>
+
+  <!-- Fallback content when no restaurant prop is provided -->
+  <VCard v-else>
+    <VCardTitle>
+      No restaurant information available
+    </VCardTitle>
   </VCard>
 </template>

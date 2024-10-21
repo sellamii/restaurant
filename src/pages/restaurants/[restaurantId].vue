@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useFetchRestaurant } from '~/composables/restaurants';
-import { computed } from 'vue';
 
 const { params } = useRoute();
 const { data: restaurant, error } = useFetchRestaurant({ restaurantId: params.restaurantId });
@@ -16,7 +15,7 @@ const averageRating = computed(() => {
 
 <template>
   <VAlert v-if="error" type="error" class="mt-4">
-    {{ error === 'Not Found, No any handler or file route' ? 'Restaurant not found. Please check the ID.' : error }}
+    {{ error === 'Not Found, No any handler or file route' ? 'Restaurant not found. Please check the ID.' : 'Error: An error occurred while fetching the restaurant' }}
   </VAlert>
   <div v-else-if="restaurant" class="grid grid-cols-1 md:grid-cols-[minmax(0,_1fr)_16rem] gap-6">
     <VCard>

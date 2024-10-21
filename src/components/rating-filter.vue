@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { ref, defineEmits, watch } from 'vue';
+import { ref, watch } from 'vue';
+
+const emit = defineEmits([`update:filter`]);
 
 const ratingFilterItems = [
   { title: `all restaurants`, value: 0 },
@@ -10,12 +12,11 @@ const ratingFilterItems = [
   { title: `1 star or more`, value: 1 },
 ];
 
-const emit = defineEmits(['update:filter']);
 const selectedRating = ref(0);
 
 // Watcher for selectedRating for emit new value
 watch(selectedRating, (newValue) => {
-  emit('update:filter', newValue);
+  emit(`update:filter`, newValue);
 });
 </script>
 
