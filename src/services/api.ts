@@ -1,5 +1,5 @@
 import ky from 'ky';
 
 export const api = ky.create({
-  prefixUrl: `${window.location.origin}/api`,
+  prefixUrl: import.meta.env.VITE_API_BASE_URL,
 });
