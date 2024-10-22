@@ -28,7 +28,7 @@ export function useFetchRestaurants() {
   return useQuery({
     queryKey: [`restaurants-list`],
     queryFn: () => {
-      const url = `restaurants`;
+      const url = `restaurants.json`;
       return api(url).json<Restaurant[]>();
     },
   });
