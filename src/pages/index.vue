@@ -1,22 +1,23 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { type Restaurant, useFetchRestaurants } from '~/composables/restaurants';
+import { useAverageRating } from '~/composables/useAverageRating';
 
 const { data: restaurants, isError } = useFetchRestaurants();
 const selectedRatingFilter = ref(0);
 
-// update notation filter
+// Update notation filter
 function updateRatingFilter(value: number) {
   selectedRatingFilter.value = value;
 }
 
-// Filter Restaurant by Rating
+// Filter restaurants by rating
 const filteredRestaurants = computed(() => {
   if (!restaurants.value) return [];
   if (selectedRatingFilter.value === 0) return restaurants.value;
+
   return restaurants.value.filter((restaurant: Restaurant) => {
-    const averageRating = restaurant.reviews.reduce((sum, review) => sum + review.rating, 0) / restaurant.reviews.length;
-    return averageRating >= selectedRatingFilter.value;
+    const averageRating = useAverageRating(restaurant);
+    return averageRating.value >= selectedRatingFilter.value;
   });
 });
 </script>

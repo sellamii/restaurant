@@ -1,18 +1,13 @@
 <script setup lang="ts">
 import { type Restaurant } from '~/composables/restaurants';
+import { useAverageRating } from '~/composables/useAverageRating';
 
 const props = defineProps<{
   restaurant: Restaurant
 }>();
 
-// Compute the average rating based on the reviews array in the Restaurant type
-const averageRating = computed(() => {
-  if (props.restaurant?.reviews?.length > 0) {
-    const total = props.restaurant.reviews.reduce((sum, review) => sum + review.rating, 0);
-    return total / props.restaurant.reviews.length;
-  }
-  return 0; // Default to 0 if there are no reviews
-});
+// Use the composable to compute the average rating
+const averageRating = useAverageRating(props.restaurant);
 </script>
 
 <template>

@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import { useFetchRestaurant } from '~/composables/restaurants';
+import { useAverageRating } from '~/composables/useAverageRating';
 
 const { params } = useRoute();
 const { data: restaurant, error } = useFetchRestaurant({ restaurantId: params.restaurantId });
 
-const averageRating = computed(() => {
-  if (restaurant.value && restaurant.value.reviews.length > 0) {
-    const total = restaurant.value.reviews.reduce((sum, review) => sum + review.rating, 0);
-    return total / restaurant.value.reviews.length;
-  }
-  return 0;
-});
+// Ensure restaurant is either a Restaurant or null (not undefined)
+const restaurantValue = computed(() => restaurant.value ?? null);
+
+// Use the composable to compute the average rating
+const averageRating = useAverageRating(restaurantValue.value);
 </script>
 
 <template>
