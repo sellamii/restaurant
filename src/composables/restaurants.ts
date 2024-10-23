@@ -26,26 +26,20 @@ export interface Review {
 
 export function useFetchRestaurants() {
   return useQuery({
-    queryKey: ['restaurants-list'],
+    queryKey: [`restaurants-list`],
     queryFn: () => {
-      let url: string;
+      const url = `/restaurants.json`;
 
       // Check Env
-      if (import.meta.env.VITE_API_ENV === 'local') {
-        // use api local
-        url = 'restaurants';
-        return api(url).json<Restaurant[]>();
-      } else {
-        // Netlify Version Production
-        url = '/restaurants.json'; // accès au fichier JSON dans le dossier public de Netlify
-        return fetch(url)
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Erreur lors du chargement des restaurants');
-            }
-            return response.json();
-          });
-      }
+      if (import.meta.env.VITE_API_ENV === `local`)
+        return api(`restaurants`).json<Restaurant[]>();
+      // Netlify Version Production
+      return fetch(url)
+        .then((response) => {
+          if (!response.ok)
+            throw new Error(`Erreur lors du chargement des restaurants`);
+          return response.json();
+        });
     },
   });
 }
